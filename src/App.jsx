@@ -10,7 +10,7 @@ const App = () => {
 
   const gridRef = useRef(null);
 
-  const [rowData, setRowData] = useState([
+  const rowData = [
     {         
       id: 1, 
       make: "Tesla", 
@@ -35,10 +35,10 @@ const App = () => {
       electric: false, 
       selectable: true  
     },
-  ]);
+  ];
 
   // Column Definitions: Defines the columns to be displayed.
-  const [columnDefs, setColumnDefs] = useState([
+  const columnDefs = [
       {
         headerCheckboxSelection: true, // Enables "Select All"
         checkboxSelection: true, // Enables row selection
@@ -48,7 +48,7 @@ const App = () => {
       { headerName: "Car Model", field: "model" },
       { headerName: "Car Price", field: "price" },
       { headerName: "Car Type:", field: "electric" }
-  ]);
+  ];
 
   // Function to determine if a row is selectable
   const isRowSelectable = (params) => {
