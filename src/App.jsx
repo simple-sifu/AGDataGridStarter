@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+  import { AgGridReact } from 'ag-grid-react';
+  import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+  import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+  // Register all Community features
+  ModuleRegistry.registerModules([AllCommunityModule]);
+
+
+const App = () => {
+  const [rowData, setRowData] = useState([
+    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+    { make: "Ford", model: "F-Series", price: 33850, electric: false },
+    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+]);
+
+// Column Definitions: Defines the columns to be displayed.
+const [colDefs, setColDefs] = useState([
+    { field: "make" },
+    { field: "model" },
+    { field: "price" },
+    { field: "electric" }
+]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ height: "1100px", width: "1100px" }}>
+        <AgGridReact
+            rowData={rowData}
+            columnDefs={colDefs}
+        />
+    </div>
+  );
+};
 
-export default App
+export default App;
