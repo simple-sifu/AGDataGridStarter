@@ -55,6 +55,11 @@ const App = () => {
     return params.data.selectable; // Only rows where `selectable: true` will have an enabled checkbox
   };
 
+  const onSelectionChanged = () => {
+    const selectedRows = gridRef.current.api.getSelectedRows();
+    console.log("Selected Rows:", selectedRows);
+  };
+
   return (
     <div style={{ height: "1100px", width: "1100px" }}>
         <AgGridReact
@@ -63,6 +68,7 @@ const App = () => {
           columnDefs={columnDefs}
           rowSelection="multiple"
           isRowSelectable={isRowSelectable}
+          onSelectionChanged={onSelectionChanged}
         />
     </div>
   );
