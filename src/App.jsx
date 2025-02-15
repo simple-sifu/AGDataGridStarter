@@ -1,6 +1,6 @@
   import { AgGridReact } from 'ag-grid-react';
   import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
-  import { useState, useRef } from 'react';
+  import { useRef } from 'react';
 
   // Register all Community features
   ModuleRegistry.registerModules([AllCommunityModule]);
