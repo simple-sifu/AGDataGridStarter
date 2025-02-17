@@ -1,12 +1,38 @@
   import { AgGridReact } from 'ag-grid-react';
   import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
-  import { useRef } from 'react';
+  import { useRef, useState, useEffect } from 'react';
 
   // Register all Community features
   ModuleRegistry.registerModules([AllCommunityModule]);
 
+  const CustomCheckboxRenderer = (props) => {
+    const checkboxRef = useRef(null);
+  
+    useEffect(() => {
+      if (checkboxRef.current) {
+        if (props.data.status === "indeterminate") {
+          checkboxRef.current.indeterminate = true;
+        } else {
+          checkboxRef.current.indeterminate = false;
+          checkboxRef.current.checked = props.value;
+        }
+      }
+    }, [props.value, props.data.status]);
+  
+    return (
+      <input
+        type="checkbox"
+        ref={checkboxRef}
+        checked={props.value}
+        onChange={(e) => props.node.setSelected(e.target.checked)}
+      />
+    );
+  };
+  
 
 const App = () => {
+
+  const [gridApi, setGridApi] = useState(null);
 
   const gridRef = useRef(null);
 
@@ -17,7 +43,9 @@ const App = () => {
       model: "Model Y", 
       price: 64950, 
       electric: true, 
-      selectable: true 
+      selectable: true,
+      status: "checked", 
+      selected: true,
     },
     { 
       id: 2, 
@@ -25,7 +53,9 @@ const App = () => {
       model: "F-Series", 
       price: 33850, 
       electric: false,  
-      selectable: true 
+      selectable: true,
+      status: "unchecked", 
+      selected: true,
     },
     { 
       id: 3, 
@@ -33,7 +63,9 @@ const App = () => {
       model: "Corolla", 
       price: 29600, 
       electric: false, 
-      selectable: true  
+      selectable: true,
+      status: "indeterminate", 
+      selected: true,
     },
   ];
 
@@ -43,11 +75,14 @@ const App = () => {
         headerCheckboxSelection: true, // Enables "Select All"
         checkboxSelection: true, // Enables row selection
         width: 50,
+        field: "name",
+        cellRendererFramework: CustomCheckboxRenderer, // Custom renderer for indeterminate state
       },
       { headerName: "Car Make", field: "make" },
       { headerName: "Car Model", field: "model" },
       { headerName: "Car Price", field: "price" },
-      { headerName: "Car Type:", field: "electric" }
+      { headerName: "Car Type:", field: "electric" },
+      { field: "status" }
   ];
 
   // Function to determine if a row is selectable
@@ -60,6 +95,22 @@ const App = () => {
     console.log("Selected Rows:", selectedRows);
   };
 
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+
+    setTimeout(() => {
+      params.api.forEachNode((node) => {
+        console.log("node =", node)
+        if (node.data.status === "checked") {
+          node.setSelected(true, false); // Fully checked
+        } else if (node.data.status === "indeterminate") {
+          node.setSelected(true, false); // Indeterminate state
+        }
+      });
+    }, 100); // Slight delay to ensure the grid is ready
+  };
+
   return (
     <div style={{ height: "1100px", width: "1100px" }}>
         <AgGridReact
@@ -67,11 +118,18 @@ const App = () => {
           rowData={rowData}
           columnDefs={columnDefs}
           rowSelection="multiple"
-          isRowSelectable={isRowSelectable}
-          onSelectionChanged={onSelectionChanged}
+          onGridReady={onGridReady}
+          getRowNodeId={(data) => {
+            console.log("data.id.toString()=", data.id.toString())
+            return data.id.toString()
+          }} // Ensure unique row IDs
         />
     </div>
   );
 };
 
 export default App;
+
+
+// isRowSelectable={isRowSelectable}
+// onSelectionChanged={onSelectionChanged}
